@@ -62,4 +62,4 @@ def PDFGetter(PaperListTxT, WhereToSave):
         #Nehany nagyon egyszeru statisztika kiirasa, nyugodtan kikommentelheto
         print("Papers: "+str(nPapers)+"; PDFs: "+str(nPDFs)+"; not found: "+str(notFounds)+"; unknown errors: "+str(otherFails))
 #Pelda kod a fuggveny futtatasara
-PDFGetter("c:\\Szakdoga\\aminer_papers_0.txt","c:\\Szakdoga")
+#PDFGetter("c:\\Szakdoga\\aminer_papers_0.txt","c:\\Szakdoga")
