@@ -1,4 +1,4 @@
-def PDFGetter(PaperListTxT, WhereToSave):
+def PDFGetter(PaperListTxT, WhereToSave, logFile):
     """
     PaperListTxT: Openacademic graf strukturajanak megfelelo strukturaju fajl, amibol az id es pdf attributumok vannak hasznalva.
     WhereToSave: A mappa utvonala, ahova a pdf-eket mentse a fuggveny. A mappanak leteznie kell.
@@ -67,10 +67,13 @@ def PDFGetter(PaperListTxT, WhereToSave):
                 #Mar levan toltve a fajl
                 else:
                     nPDFs += 1
-        #Nehany nagyon egyszeru statisztika kiirasa, nyugodtan kikommentelheto
-        print(str(datetime.datetime.now())+": Papers: "+str(nPapers)+"; PDFs: "+str(nPDFs)+"; not found: "+str(notFounds)+"; unknown errors: "+str(otherFails))
+        #Nehany nagyon statisztika kiirasa (kikommentelheto)
+        stats = str(datetime.datetime.now())+" "+PaperListTxT+": Papers: "+str(nPapers)+"; PDFs: "+str(nPDFs)+"; not found: "+str(notFounds)+"; unknown errors: "+str(otherFails)
+        print(stats)
+        with open(logFile,"a") as log:
+            log.write(stats+"\n")
     return nPapers, nPDFs, notFounds, otherFails
-def DownloadPapers(textDir,PDFDir):
+def DownloadPapers(textDir, PDFDir, logFile):
     """
     textDir: A text fajlok helye.
     PDFDir: A mappa, ahova a PDF-ek keruljenek (ezen belul text fajlokent lesz egy almappa).
@@ -96,13 +99,15 @@ def DownloadPapers(textDir,PDFDir):
             #mappa letrehozasa a text fajl nevevel
             os.makedirs(name=PDFDir+"\\"+dirname, exist_ok=True)
             #PDF-ek letoltese
-            nPapersT, nPDFsT, notFoundsT, otherFailsT = PDFGetter(textDir+"\\"+elem,PDFDir+"\\"+dirname)
+            nPapersT, nPDFsT, notFoundsT, otherFailsT = PDFGetter(textDir+"\\"+elem,PDFDir+"\\"+dirname,logFile)
             nPapers += nPapersT
             nPDFs += nPDFsT
             notFounds += notFoundsT
             otherFails += otherFailsT
     #Globalis statisztika kiirasa (kikommentelheto)
-    print("Done! Statistics:\nPapers: "+str(nPapers)+"; PDFs: "+str(nPDFs)+"; not found: "+str(notFounds)+"; unknown errors: "+str(otherFails))
-    print("Time [s]: "+str(time.time()-start))
+    stats = "Done! Statistics:\nPapers: "+str(nPapers)+"; PDFs: "+str(nPDFs)+"; not found: "+str(notFounds)+"; unknown errors: "+str(otherFails) +"\nTime [s]: "+str(time.time()-start)
+    print(stats)
+    with open(logFile,"a") as log:
+        log.write(stats+"\n")
 #A fuggveny meghivasa:
-DownloadPapers("c:\\Szakdoga\\Texts","c:\\Szakdoga\\asdPDFs2")
+DownloadPapers("/mnt/datasharepoint/graph","/mnt/datasharepoint-pdf","./log.txt")
