@@ -46,7 +46,7 @@ def PDFGetter(PaperListTxT, WhereToSave, logFile):
                                     #static.aminer.org helyrol letoltott pdf-eknel elofordul, hogy egy -napi limit betelt- uzenetet ad vissza a pdf
                                     #helyett, ezek az uzenetek 206 meretuek es mndig ugyanannal a linknel fordulnak elo
                                     if(len(data)>0 and len(data) != 206):
-                                        f = open(WhereToSave+"\\"+paper.get("id")+".pdf","wb")
+                                        f = open(WhereToSave+"/"+paper.get("id")+".pdf","wb")
                                         f.write(data)
                                         f.close()
                                         nPDFs += 1
@@ -97,9 +97,9 @@ def DownloadPapers(textDir, PDFDir, logFile):
         if(elem.rsplit(".")[-1] == "txt"):
             dirname = elem[0:len(elem)-4]
             #mappa letrehozasa a text fajl nevevel
-            os.makedirs(name=PDFDir+"\\"+dirname, exist_ok=True)
+            os.makedirs(name=PDFDir+"/"+dirname, exist_ok=True)
             #PDF-ek letoltese
-            nPapersT, nPDFsT, notFoundsT, otherFailsT = PDFGetter(textDir+"\\"+elem,PDFDir+"\\"+dirname,logFile)
+            nPapersT, nPDFsT, notFoundsT, otherFailsT = PDFGetter(textDir+"/"+elem,PDFDir+"/"+dirname,logFile)
             nPapers += nPapersT
             nPDFs += nPDFsT
             notFounds += notFoundsT
