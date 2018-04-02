@@ -9,6 +9,9 @@ def PDFGetter(PaperListTxT, WhereToSave, logFile):
     import json
     import os
     import datetime
+    from urllib.parse import urlencode
+    import urllib.request
+    import urllib.error
     #Cikkek szama
     nPapers = 0
     #Letoltott pdf-ek szama
@@ -46,9 +49,8 @@ def PDFGetter(PaperListTxT, WhereToSave, logFile):
                                     #static.aminer.org helyrol letoltott pdf-eknel elofordul, hogy egy -napi limit betelt- uzenetet ad vissza a pdf
                                     #helyett, ezek az uzenetek 206 meretuek es mndig ugyanannal a linknel fordulnak elo
                                     if(len(data)>0 and len(data) != 206):
-                                        f = open(WhereToSave+"/"+paper.get("id")+".pdf","wb")
-                                        f.write(data)
-                                        f.close()
+                                        with open(WhereToSave+"/"+paper.get("id")+".pdf","wb") as f:
+                                            f.write(data)
                                         nPDFs += 1
                                         break
                                     else:
@@ -64,6 +66,11 @@ def PDFGetter(PaperListTxT, WhereToSave, logFile):
                                 conn[host].close()
                                 conn[host] = http.client.HTTPConnection(host)
                                 error += 1
+                            #Ha nem jo a pdf url kodolasa, logoljuk (nem talaltam ra jobb megoldast)
+                            except UnicodeEncodeError:
+                                with open("./UnicodeEncodeError.txt","a") as f:
+                                    f.write(PaperListTxT+": "+paper.get("id")+"; "+PDF+"\n")
+                                break
                 #Mar levan toltve a fajl
                 else:
                     nPDFs += 1
