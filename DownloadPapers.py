@@ -9,9 +9,6 @@ def PDFGetter(PaperListTxT, WhereToSave, logFile):
     import json
     import os
     import datetime
-    from urllib.parse import urlencode
-    import urllib.request
-    import urllib.error
     #Cikkek szama
     nPapers = 0
     #Letoltott pdf-ek szama
