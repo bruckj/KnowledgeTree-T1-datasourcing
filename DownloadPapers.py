@@ -1,3 +1,5 @@
+#Globalis ID arra az esetre, ha nem lenne egy cikknek ID-je
+globalID = 0
 def PDFGetter(PaperListTxT, WhereToSave, logFile):
     """
     PaperListTxT: Openacademic graf strukturajanak megfelelo strukturaju fajl, amibol az id es pdf attributumok vannak hasznalva.
@@ -17,17 +19,27 @@ def PDFGetter(PaperListTxT, WhereToSave, logFile):
     notFounds = 0
     #Egyeb hibak szama
     otherFails = 0
+    global globalID
     with open(PaperListTxT,"r") as txt:
         #Kapcsolatok nyilvantartasara hasznalt szotar
         conn = {}
         #Mar letezo fajlok listaja
         files = os.listdir(WhereToSave)
         #A fajlban soronkent egy cikk szerepel
+        lineCounter = 0
         for line in txt:
             paper = json.loads(line)
             if not paper is None:
                 nPapers += 1
-                if paper.get("id")+".pdf" not in files:
+                localID = paper.get("id")
+                #Ha nem lenne ID-je egy cikknek
+                if localID is None:
+                    #Olyan globalis ID kell, ami nincsen egyik adathalmazban sem
+                    localID = "EgyMegyMagMegMegEgyMegyMagAzKetMegyMag"+str(globalID)
+                    globalID += 1
+                    with open("NoIDErrors.txt","a") as f:
+                        f.write(PaperListTxT+": given id: "+localID+"; line number: "+str(lineCounter)+"\n")
+                if localID+".pdf" not in files:
                     PDF = paper.get("pdf")
                     if not PDF is None:
                         error = 0
@@ -46,7 +58,7 @@ def PDFGetter(PaperListTxT, WhereToSave, logFile):
                                     #static.aminer.org helyrol letoltott pdf-eknel elofordul, hogy egy -napi limit betelt- uzenetet ad vissza a pdf
                                     #helyett, ezek az uzenetek 206 meretuek es mndig ugyanannal a linknel fordulnak elo
                                     if(len(data)>0 and len(data) != 206):
-                                        with open(WhereToSave+"/"+paper.get("id")+".pdf","wb") as f:
+                                        with open(WhereToSave+"/"+localID+".pdf","wb") as f:
                                             f.write(data)
                                         nPDFs += 1
                                         break
@@ -66,11 +78,12 @@ def PDFGetter(PaperListTxT, WhereToSave, logFile):
                             #Ha nem jo a pdf url kodolasa, logoljuk (nem talaltam ra jobb megoldast)
                             except UnicodeEncodeError:
                                 with open("./UnicodeEncodeError.txt","a") as f:
-                                    f.write(PaperListTxT+": "+paper.get("id")+"; "+PDF+"\n")
+                                    f.write(PaperListTxT+": "+localID+"; "+PDF+"\n")
                                 break
                 #Mar levan toltve a fajl
                 else:
                     nPDFs += 1
+            lineCounter += 1
         #Nehany nagyon statisztika kiirasa (kikommentelheto)
         stats = str(datetime.datetime.now())+" "+PaperListTxT+": Papers: "+str(nPapers)+"; PDFs: "+str(nPDFs)+"; not found: "+str(notFounds)+"; unknown errors: "+str(otherFails)
         print(stats)
