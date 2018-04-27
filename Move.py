@@ -1,6 +1,7 @@
 #Athelyezi a pdf-eket az almappakbol, majd torli az ures mappakat
 import os
-startdir="/mnt/datasharepoint-pdf/openacademic"
+import time
+startdir="c:/Szakdoga/testmove"
 dirs = os.listdir(startdir)
 moveCount = 0
 idCollision = 0
@@ -15,6 +16,8 @@ for dir in dirs:
                 #Az athelyezes itt tortenik
                 os.rename(startdir+"/"+dir+"/"+pdf,startdir+"/"+pdf)
                 moveCount += 1
+            except BlockingIOError:
+                time.sleep(5)
             except NotADirectoryError:
                 continue
             except FileExistsError:
