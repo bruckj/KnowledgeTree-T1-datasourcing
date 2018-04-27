@@ -1,7 +1,7 @@
 #Athelyezi a pdf-eket az almappakbol, majd torli az ures mappakat
 import os
 import time
-startdir="c:/Szakdoga/testmove"
+startdir="/mnt/datasharepoint-pdf/openacademic"
 dirs = os.listdir(startdir)
 moveCount = 0
 idCollision = 0
